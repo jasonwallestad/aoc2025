@@ -1,25 +1,25 @@
+import math
+
 with open("input/day08.txt", "r") as puzzleInput:
     boxes = [[int(n) for n in line.strip().split(",")] for line in puzzleInput.readlines()]
 
 distances, circuits, merged_index, p1_limit = [], [], set(), 1000
 
-for b1, (x1, y1, z1) in enumerate(boxes):
-    for b2, (x2, y2, z2) in enumerate(boxes):
-        if b2 <= b1:
-            continue
-        distances.append((b1, b2, (x1 - x2)**2 + (y1 - y2)**2 + (z1 - z2)**2))
+for b1, box1 in enumerate(boxes):
+    for b2 in range(b1 + 1, len(boxes)):
+        distances.append((b1, b2, math.dist(box1, boxes[b2])))
 
-for i, (b1, b2, distance) in enumerate(sorted(distances, key=lambda x: x[2])):
+distances.sort(key=lambda x: x[2])
+for i in range(len(distances)):
+    b1, b2, distance = distances[i]
     connection = {b1, b2}
     for c, circuit in enumerate(circuits):
         if connection & circuit:
             circuits[c].update(connection)
-            # check to see if any circuits can be merged
             if i <= p1_limit - 1 and connection <= merged_index:
                 for cc, circuit_check in enumerate(circuits):
                     if c != cc and connection & circuit_check:
-                        circuits[c].update(circuit_check)
-                        circuits.pop(cc)
+                        circuits[c].update(circuits.pop(cc))
                         break
             break
     else:
@@ -28,7 +28,7 @@ for i, (b1, b2, distance) in enumerate(sorted(distances, key=lambda x: x[2])):
     
     if i == p1_limit - 1:
         circuits.sort(key=len, reverse=True)
-        print(f"Part 1: {len(circuits[0]) * len(circuits[1]) * len(circuits[2])}")
+        print(f"Part 1: {math.prod([len(n) for n in circuits[:3]])}")
 
     if len(merged_index) == len(boxes):
         print(f"Part 2: {boxes[b1][0] * boxes[b2][0]}")
