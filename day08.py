@@ -1,7 +1,7 @@
 with open("input/day08.txt", "r") as puzzleInput:
     boxes = [[int(n) for n in line.strip().split(",")] for line in puzzleInput.readlines()]
 
-distances, circuits, merged_index, box_index, p1_limit = [], [], set(), set(range(0, len(boxes))), 1000
+distances, circuits, merged_index, p1_limit = [], [], set(), 1000
 
 for b1, (x1, y1, z1) in enumerate(boxes):
     for b2, (x2, y2, z2) in enumerate(boxes):
@@ -25,12 +25,11 @@ for i, (b1, b2, distance) in enumerate(sorted(distances, key=lambda x: x[2])):
     else:
         circuits.append(connection)
     merged_index.update(connection)
-    box_index -= connection
     
     if i == p1_limit - 1:
         circuits.sort(key=len, reverse=True)
         print(f"Part 1: {len(circuits[0]) * len(circuits[1]) * len(circuits[2])}")
 
-    if not box_index:
+    if len(merged_index) == len(boxes):
         print(f"Part 2: {boxes[b1][0] * boxes[b2][0]}")
         break
