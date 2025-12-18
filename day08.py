@@ -14,6 +14,7 @@ for i, (b1, b2, distance) in enumerate(sorted(distances, key=lambda x: x[2])):
     for c, circuit in enumerate(circuits):
         if connection & circuit:
             circuits[c].update(connection)
+            # check if any circuits can be merged for part 1
             if i <= p1_limit - 1:
                 for cc, circuit_check in enumerate(circuits):
                     if c != cc and connection & circuit_check:
